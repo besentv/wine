@@ -1587,9 +1587,10 @@ static HRESULT WINAPI connection_GetAdapterId(
 {
     struct connection *connection = impl_from_INetworkConnection( iface );
 
-    FIXME( "%p, %p\n", iface, pgdAdapterId );
-
     *pgdAdapterId = connection->id;
+
+    TRACE("Iface: %p, AdapterId %s\n", iface, wine_dbgstr_guid(pgdAdapterId));
+
     return S_OK;
 }
 
@@ -1736,8 +1737,11 @@ static void init_networks( struct list_manager *mgr )
     {
         struct network *network;
         struct connection *connection;
-
-        id.Data1 = aa->u.s.IfIndex;
+        OLECHAR adapter_guid_string[39];
+        
+        /* Convert AdapterName (a GUID string) to a GUID struct */
+        MultiByteToWideChar(CP_ACP, 0, aa->AdapterName, -1, adapter_guid_string, 39);
+        if(CLSIDFromString(adapter_guid_string, &id)) goto done;
 
         /* assume a one-to-one mapping between networks and connections */
         if (!(network = create_network( &id ))) goto done;

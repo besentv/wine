@@ -1,5 +1,5 @@
 MODULE    = netprofm.dll
-IMPORTS   = iphlpapi
+IMPORTS   = iphlpapi ole32
 
 EXTRADLLFLAGS = -mno-cygwin
 
